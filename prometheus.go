@@ -43,7 +43,7 @@ func promApplyYamlFileCmd(originPath string, customPath string, fileName string,
 	applyYamlFileCmd(customPath, fileName, option, spec.namespaceName)
 }
 
-func createPrometheus(prometheusSpec PrometheusSpec, originPath string, customPath string) {
+func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPath string) {
 	// /////////test config
 	// var Prometheus_spec = PrometheusSpec{
 	// 	scrapeInterv:  "15s",

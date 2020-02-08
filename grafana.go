@@ -47,7 +47,7 @@ func grafApplyYamlFileCmd(originPath string, customPath string, fileName string,
 	applyYamlFileCmd(customPath, fileName, option, spec.namespaceName)
 }
 
-func createGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string) {
+func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string) {
 	// ////////test config
 	// var grafana_spec = GrafanaSpec{
 	// 	namespaceName:  "monitoring",
