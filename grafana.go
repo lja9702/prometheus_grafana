@@ -47,7 +47,7 @@ func grafApplyYamlFileCmd(originPath string, customPath string, fileName string,
 	applyYamlFileCmd(customPath, fileName, option, spec.namespaceName)
 }
 
-func createGrafana(grafanaSpec GrafanaSpec) {
+func createGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string) {
 	// ////////test config
 	// var grafana_spec = GrafanaSpec{
 	// 	namespaceName:  "monitoring",
@@ -62,11 +62,11 @@ func createGrafana(grafanaSpec GrafanaSpec) {
 	connectToClusterCmd()
 	createNamespaceCmd(grafanaSpec.namespaceName)
 	///grafana + prometheus 라면
-	grafApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "graf_with_prom_config_map.yaml", &grafanaSpec, "")
+	grafApplyYamlFileCmd(originPath, customPath, "graf_with_prom_config_map.yaml", &grafanaSpec, "")
 
 	///grafana만이라면 config map 스킵
 	//
-	grafApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "graf_deployment.yaml", &grafanaSpec, "")
+	grafApplyYamlFileCmd(originPath, customPath, "graf_deployment.yaml", &grafanaSpec, "")
 
 	//////////////////Check deployment file
 	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+grafanaSpec.namespaceName)
@@ -75,5 +75,5 @@ func createGrafana(grafanaSpec GrafanaSpec) {
 	printError(err)
 	printOutput(output)
 	//////////////////////////////////////////
-	grafApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "graf_service.yaml", &grafanaSpec, "--namespace=")
+	grafApplyYamlFileCmd(originPath, customPath, "graf_service.yaml", &grafanaSpec, "--namespace=")
 }

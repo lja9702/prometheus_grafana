@@ -43,7 +43,7 @@ func promApplyYamlFileCmd(originPath string, customPath string, fileName string,
 	applyYamlFileCmd(customPath, fileName, option, spec.namespaceName)
 }
 
-func createPrometheus(prometheusSpec PrometheusSpec) {
+func createPrometheus(prometheusSpec PrometheusSpec, originPath string, customPath string) {
 	// /////////test config
 	// var Prometheus_spec = PrometheusSpec{
 	// 	scrapeInterv:  "15s",
@@ -55,9 +55,9 @@ func createPrometheus(prometheusSpec PrometheusSpec) {
 
 	connectToClusterCmd()
 	createNamespaceCmd(prometheusSpec.namespaceName)
-	promApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "prom_clusterRole.yaml", &prometheusSpec, "")
-	promApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "prom_config_map.yaml", &prometheusSpec, "")
-	promApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "prom_deployment.yaml", &prometheusSpec, "")
+	promApplyYamlFileCmd(originPath, customPath, "prom_clusterRole.yaml", &prometheusSpec, "")
+	promApplyYamlFileCmd(originPath, customPath, "prom_config_map.yaml", &prometheusSpec, "")
+	promApplyYamlFileCmd(originPath, customPath, "prom_deployment.yaml", &prometheusSpec, "")
 
 	//////////////////Check deployment file
 	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+prometheusSpec.namespaceName)
@@ -66,5 +66,5 @@ func createPrometheus(prometheusSpec PrometheusSpec) {
 	printError(err)
 	printOutput(output)
 	//////////////////////////////////////////
-	promApplyYamlFileCmd("origin_yaml_list/", "custom_yaml_list/", "prom_service.yaml", &prometheusSpec, "--namespace=")
+	promApplyYamlFileCmd(originPath, customPath, "prom_service.yaml", &prometheusSpec, "--namespace=")
 }
