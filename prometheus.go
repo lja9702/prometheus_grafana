@@ -8,10 +8,10 @@ import (
 )
 
 type PrometheusSpec struct {
-	namespaceName string `json:"namespaceName"` //namespace 명 (defult: monitoring)
-	imgVersion    string `json:"imgVersion"`    //prometheus image version (defalt: latest)
-	scrapeInterv  string `json:"scrapeInterv"`  //prometheus가 스크랩을 요청하는 시간 간격(default: 15s)
-	targetHosts   string `json:"targetHosts"`   //(default: ['localhost:9090'])
+	NamespaceName string `json:"namespaceName"` //namespace 명 (defult: monitoring)
+	ImgVersion    string `json:"imgVersion"`    //prometheus image version (defalt: latest)
+	ScrapeInterv  string `json:"scrapeInterv"`  //prometheus가 스크랩을 요청하는 시간 간격(default: 15s)
+	TargetHosts   string `json:"targetHosts"`   //(default: ['localhost:9090'])
 }
 
 func WordbyWordScanPrometheus(originPath string, customPath string, fileName string, spec *PrometheusSpec) {
@@ -23,10 +23,10 @@ func WordbyWordScanPrometheus(originPath string, customPath string, fileName str
 
 	// Create replacer with pairs as arguments.
 	replacerArg := strings.NewReplacer(
-		"{{namespaceName}}", spec.namespaceName,
-		"{{targetHosts}}", spec.targetHosts,
-		"{{scrapeInterv}}", spec.scrapeInterv,
-		"{{imgVersion}}", spec.imgVersion,
+		"{{namespaceName}}", spec.NamespaceName,
+		"{{targetHosts}}", spec.TargetHosts,
+		"{{scrapeInterv}}", spec.ScrapeInterv,
+		"{{imgVersion}}", spec.ImgVersion,
 	)
 
 	// Replace all pairs.
@@ -40,7 +40,7 @@ func WordbyWordScanPrometheus(originPath string, customPath string, fileName str
 
 func promApplyYamlFileCmd(originPath string, customPath string, fileName string, spec *PrometheusSpec, option string) {
 	WordbyWordScanPrometheus(originPath, customPath, fileName, spec)
-	applyYamlFileCmd(customPath, fileName, option, spec.namespaceName)
+	applyYamlFileCmd(customPath, fileName, option, spec.NamespaceName)
 }
 
 func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPath string) {
@@ -54,13 +54,13 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPa
 	// ///////////////////
 
 	connectToClusterCmd()
-	createNamespaceCmd(prometheusSpec.namespaceName)
+	createNamespaceCmd(prometheusSpec.NamespaceName)
 	promApplyYamlFileCmd(originPath, customPath, "prom_clusterRole.yaml", &prometheusSpec, "")
 	promApplyYamlFileCmd(originPath, customPath, "prom_config_map.yaml", &prometheusSpec, "")
 	promApplyYamlFileCmd(originPath, customPath, "prom_deployment.yaml", &prometheusSpec, "")
 
 	//////////////////Check deployment file
-	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+prometheusSpec.namespaceName)
+	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+prometheusSpec.NamespaceName)
 	printCommand(cmd)
 	output, err := cmd.CombinedOutput()
 	printError(err)

@@ -8,12 +8,12 @@ import (
 )
 
 type GrafanaSpec struct {
-	namespaceName  string `json:"namespaceName"`  //namespace 명 (defult: monitoring)
-	imgVersion     string `json:"imgVersion"`     //prometheus image version (defalt: latest)
-	requestsMemory string `json:"requestsMemory"` //request는 컨테이너가 생성될때 요청하는 리소스 양 (defalt: 1Gi)
-	requests_cpu   string `json:"requestsCpu"`    //default: 500m
-	limitsMemory   string `json:"limitsMemory"`   //리소스가 더 필요한 경우 추가로 더 사용할 수 있는 부분 (default: 2Gi)
-	limitsCpu      string `json:"limitsCpu"`      //default: 1000m
+	NamespaceName  string `json:"namespaceName"`  //namespace 명 (defult: monitoring)
+	ImgVersion     string `json:"imgVersion"`     //prometheus image version (defalt: latest)
+	RequestsMemory string `json:"requestsMemory"` //request는 컨테이너가 생성될때 요청하는 리소스 양 (defalt: 1Gi)
+	RequestsCpu   string `json:"requestsCpu"`    //default: 500m
+	LimitsMemory   string `json:"limitsMemory"`   //리소스가 더 필요한 경우 추가로 더 사용할 수 있는 부분 (default: 2Gi)
+	LimitsCpu      string `json:"limitsCpu"`      //default: 1000m
 }
 
 func WordbyWordScanGrafana(originPath string, customPath string, fileName string, spec *GrafanaSpec) {
@@ -25,12 +25,12 @@ func WordbyWordScanGrafana(originPath string, customPath string, fileName string
 
 	// Create replacer with pairs as arguments.
 	replacerArg := strings.NewReplacer(
-		"{{namespaceName}}", spec.namespaceName,
-		"{{imgVersion}}", spec.imgVersion,
-		"{{requestsMemory}}", spec.requestsMemory,
-		"{{requests_cpu}}", spec.requests_cpu,
-		"{{limitsMemory}}", spec.limitsMemory,
-		"{{limitsCpu}}", spec.limitsCpu,
+		"{{namespaceName}}", spec.NamespaceName,
+		"{{imgVersion}}", spec.ImgVersion,
+		"{{requestsMemory}}", spec.RequestsMemory,
+		"{{requests_cpu}}", spec.RequestsCpu,
+		"{{limitsMemory}}", spec.LimitsMemory,
+		"{{limitsCpu}}", spec.LimitsCpu,
 	)
 
 	// Replace all pairs.
@@ -44,7 +44,7 @@ func WordbyWordScanGrafana(originPath string, customPath string, fileName string
 
 func grafApplyYamlFileCmd(originPath string, customPath string, fileName string, spec *GrafanaSpec, option string) {
 	WordbyWordScanGrafana(originPath, customPath, fileName, spec)
-	applyYamlFileCmd(customPath, fileName, option, spec.namespaceName)
+	applyYamlFileCmd(customPath, fileName, option, spec.NamespaceName)
 }
 
 func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string) {
@@ -60,7 +60,7 @@ func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string
 	// ///////////
 
 	connectToClusterCmd()
-	createNamespaceCmd(grafanaSpec.namespaceName)
+	createNamespaceCmd(grafanaSpec.NamespaceName)
 	///grafana + prometheus 라면
 	grafApplyYamlFileCmd(originPath, customPath, "graf_with_prom_config_map.yaml", &grafanaSpec, "")
 
@@ -69,7 +69,7 @@ func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string
 	grafApplyYamlFileCmd(originPath, customPath, "graf_deployment.yaml", &grafanaSpec, "")
 
 	//////////////////Check deployment file
-	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+grafanaSpec.namespaceName)
+	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+grafanaSpec.NamespaceName)
 	printCommand(cmd)
 	output, err := cmd.CombinedOutput()
 	printError(err)
