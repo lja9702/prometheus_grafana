@@ -14,6 +14,7 @@ type GrafanaSpec struct {
 	RequestsCpu   string `json:"requestsCpu"`    //default: 500m
 	LimitsMemory   string `json:"limitsMemory"`   //리소스가 더 필요한 경우 추가로 더 사용할 수 있는 부분 (default: 2Gi)
 	LimitsCpu      string `json:"limitsCpu"`      //default: 1000m
+	NodePort	string `json:"nodePort"`	//default: 32000
 }
 
 func WordbyWordScanGrafana(originPath string, customPath string, fileName string, spec *GrafanaSpec) {
@@ -31,6 +32,7 @@ func WordbyWordScanGrafana(originPath string, customPath string, fileName string
 		"{{requests_cpu}}", spec.RequestsCpu,
 		"{{limitsMemory}}", spec.LimitsMemory,
 		"{{limitsCpu}}", spec.LimitsCpu,
+		"{{nodePort}}", spec.NodePort,
 	)
 
 	// Replace all pairs.
@@ -56,6 +58,7 @@ func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string
 	// 	requests_cpu:    "500m",
 	// 	limitsMemory:   "2Gi",
 	// 	limitsCpu:      "1000m",
+	//	nodePort:	"32000",
 	// }
 	// ///////////
 

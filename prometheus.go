@@ -11,7 +11,7 @@ type PrometheusSpec struct {
 	NamespaceName string `json:"namespaceName"` //namespace 명 (defult: monitoring)
 	ImgVersion    string `json:"imgVersion"`    //prometheus image version (defalt: latest)
 	ScrapeInterv  string `json:"scrapeInterv"`  //prometheus가 스크랩을 요청하는 시간 간격(default: 15s)
-	TargetHosts   string `json:"targetHosts"`   //(default: ['localhost:9090'])
+	NodePort   string `json:"nodePort"`   //(default: 30000)
 }
 
 func WordbyWordScanPrometheus(originPath string, customPath string, fileName string, spec *PrometheusSpec) {
@@ -24,7 +24,7 @@ func WordbyWordScanPrometheus(originPath string, customPath string, fileName str
 	// Create replacer with pairs as arguments.
 	replacerArg := strings.NewReplacer(
 		"{{namespaceName}}", spec.NamespaceName,
-		"{{targetHosts}}", spec.TargetHosts,
+		"{{nodePort}}", spec.NodePort,
 		"{{scrapeInterv}}", spec.ScrapeInterv,
 		"{{imgVersion}}", spec.ImgVersion,
 	)
@@ -47,7 +47,7 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPa
 	// /////////test config
 	// var Prometheus_spec = PrometheusSpec{
 	// 	scrapeInterv:  "15s",
-	// 	targetHosts:   "['localhost:9090']",
+	// 	nodePort:   "30000",
 	// 	namespaceName: "monitoring",
 	// 	imgVersion:    "v2.12.0",
 	// }
