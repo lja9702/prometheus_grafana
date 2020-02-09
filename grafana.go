@@ -29,7 +29,7 @@ func WordbyWordScanGrafana(originPath string, customPath string, fileName string
 		"{{namespaceName}}", spec.NamespaceName,
 		"{{imgVersion}}", spec.ImgVersion,
 		"{{requestsMemory}}", spec.RequestsMemory,
-		"{{requests_cpu}}", spec.RequestsCpu,
+		"{{requestsCpu}}", spec.RequestsCpu,
 		"{{limitsMemory}}", spec.LimitsMemory,
 		"{{limitsCpu}}", spec.LimitsCpu,
 		"{{nodePort}}", spec.NodePort,
