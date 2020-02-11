@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 	"net/http"
-	"io"
+	"io/ioutil"
 )
 
 /////////////////////////////////////////Check cmd output///////////
@@ -70,30 +70,8 @@ func applyYamlFileCmd(fileName string, option string, namespace_name string) {
 
 ///////////////////////////////////////////////////////////////////////
 
-
-///////////////Download yaml file
-func DownloadFile(filepath string, url string) error {
-
-    // Get the data
-    resp, err := http.Get(url)
-    if err != nil {
-        return err
-    }
-    defer resp.Body.Close()
-
-    // Create the file
-    out, err := os.Create(filepath)
-    if err != nil {
-        return err
-    }
-    defer out.Close()
-
-    // Write the body to file
-    _, err = io.Copy(out, resp.Body)
-    return err
-}
-
-func deleteFile(path string) {
+/////delete yaml file
+func deleteFile() {
 	// delete file
 	var err = os.Remove(path)
 	if isError(err) { return }
@@ -101,10 +79,22 @@ func deleteFile(path string) {
 	fmt.Println("==> done deleting file")
 }
 
-func isError(err error) bool {
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+////////////Read yaml
+func getYaml(url string) (string, error) {
+    resp, err := http.Get(url)
+    if err != nil {
+        return "", fmt.Errorf("GET error: %v", err)
+    }
+    defer resp.Body.Close()
 
-	return (err != nil)
+    if resp.StatusCode != http.StatusOK {
+        return "", fmt.Errorf("Status error: %v", resp.StatusCode)
+    }
+
+    data, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return "", fmt.Errorf("Read body: %v", err)
+    }
+
+    return string(data), nil
 }

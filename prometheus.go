@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os/exec"
 	"strings"
+	"log"
 )
 
 type PrometheusSpec struct {
@@ -14,14 +15,7 @@ type PrometheusSpec struct {
 	NodePort   string `json:"nodePort"`   //(default: 30000)
 }
 
-func WordbyWordScanPrometheus(fileName string, spec *PrometheusSpec) {
-	content, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		fmt.Println(err)
-	}
-	text := string(content)
-
-	// Create replacer with pairs as arguments.
+func promApplyYamlFileCmd(gitPath string, fileName string, spec *PrometheusSpec, option string) {
 	replacerArg := strings.NewReplacer(
 		"{{namespaceName}}", spec.NamespaceName,
 		"{{nodePort}}", spec.NodePort,
@@ -29,22 +23,22 @@ func WordbyWordScanPrometheus(fileName string, spec *PrometheusSpec) {
 		"{{imgVersion}}", spec.ImgVersion,
 	)
 
-	// Replace all pairs.
-	newFormatYmlString := replacerArg.Replace(text)
-	//fmt.Println(newFormatYmlString)
+	if yamlStr, err := getYaml(gitPath + fileName); err != nil {
+			log.Printf("Failed to get yaml file: %v", err)
+	} else {
+		log.Println("Received YAML:")
+		log.Println(yamlStr)
 
-	if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
-		fmt.Println(err)
-	}
-}
+		// Replace all pairs.
+		newFormatYmlString := replacerArg.Replace(yamlStr)
+		//fmt.Println(newFormatYmlString)
 
-func promApplyYamlFileCmd(gitPath string, fileName string, spec *PrometheusSpec, option string) {
-	if non_err := DownloadFile(fileName, gitPath); non_err == nil {
-			WordbyWordScanPrometheus(fileName, spec)
-			applyYamlFileCmd(fileName, option, spec.NamespaceName)
-			deleteFile(fileName)
-	} else{
-		panic(non_err)
+		if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
+			fmt.Println(err)
+		} else{
+			applyYamlFileCmd("custom_"+fileName, option, spec.NamespaceName)
+			deleteFile("custom_"+fileName)
+		}
 	}
 }
 

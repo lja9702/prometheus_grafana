@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os/exec"
 	"strings"
+	"log"
 )
 
 type GrafanaSpec struct {
@@ -17,14 +18,7 @@ type GrafanaSpec struct {
 	NodePort	string `json:"nodePort"`	//default: 32000
 }
 
-func WordbyWordScanGrafana(fileName string, spec *GrafanaSpec) {
-	content, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		fmt.Println(err)
-	}
-	text := string(content)
-
-	// Create replacer with pairs as arguments.
+func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, option string) {
 	replacerArg := strings.NewReplacer(
 		"{{namespaceName}}", spec.NamespaceName,
 		"{{imgVersion}}", spec.ImgVersion,
@@ -34,23 +28,22 @@ func WordbyWordScanGrafana(fileName string, spec *GrafanaSpec) {
 		"{{limitsCpu}}", spec.LimitsCpu,
 		"{{nodePort}}", spec.NodePort,
 	)
+	if yamlStr, err := getYaml(gitPath + fileName); err != nil {
+			log.Printf("Failed to get yaml file: %v", err)
+	} else {
+		log.Println("Received YAML:")
+		log.Println(yamlStr)
 
-	// Replace all pairs.
-	newFormatYmlString := replacerArg.Replace(text)
-	//fmt.Println(newFormatYmlString)
+		// Replace all pairs.
+		newFormatYmlString := replacerArg.Replace(yamlStr)
+		//fmt.Println(newFormatYmlString)
 
-	if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
-		fmt.Println(err)
-	}
-}
-
-func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, option string) {
-	if non_err := DownloadFile(fileName, gitPath); non_err == nil {
-			WordbyWordScanGrafana(fileName, spec)
-			applyYamlFileCmd(fileName, option, spec.NamespaceName)
-			deleteFile(fileName)
-	} else{
-		panic(non_err)
+		if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
+			fmt.Println(err)
+		} else{
+			applyYamlFileCmd("custom_"+fileName, option, spec.NamespaceName)
+			deleteFile("custom_"+fileName)
+		}
 	}
 }
 
