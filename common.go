@@ -52,12 +52,12 @@ func createNamespaceCmd(namespace_name string) {
 	printOutput(output)
 }
 
-func applyYamlFileCmd(customPath string, fileName string, option string, namespace_name string) {
+func applyYamlFileCmd(fileName string, option string, namespace_name string) {
 	var cmd *exec.Cmd
 	if strings.Compare(option, "--namespace=") == 0 {
-		cmd = exec.Command("kubectl", "apply", "-f", customPath+fileName, option+namespace_name)
+		cmd = exec.Command("kubectl", "apply", "-f", fileName, option+namespace_name)
 	} else {
-		cmd = exec.Command("kubectl", "apply", "-f", customPath+fileName)
+		cmd = exec.Command("kubectl", "apply", "-f", fileName)
 	}
 
 	printCommand(cmd)
@@ -67,3 +67,26 @@ func applyYamlFileCmd(customPath string, fileName string, option string, namespa
 }
 
 ///////////////////////////////////////////////////////////////////////
+
+
+///////////////Download yaml file
+func DownloadFile(filepath string, url string) error {
+
+    // Get the data
+    resp, err := http.Get(url)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+
+    // Create the file
+    out, err := os.Create(filepath)
+    if err != nil {
+        return err
+    }
+    defer out.Close()
+
+    // Write the body to file
+    _, err = io.Copy(out, resp.Body)
+    return err
+}

@@ -14,8 +14,8 @@ type PrometheusSpec struct {
 	NodePort   string `json:"nodePort"`   //(default: 30000)
 }
 
-func WordbyWordScanPrometheus(originPath string, customPath string, fileName string, spec *PrometheusSpec) {
-	content, err := ioutil.ReadFile(originPath + fileName)
+func WordbyWordScanPrometheus(fileName string, spec *PrometheusSpec) {
+	content, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -33,17 +33,20 @@ func WordbyWordScanPrometheus(originPath string, customPath string, fileName str
 	newFormatYmlString := replacerArg.Replace(text)
 	//fmt.Println(newFormatYmlString)
 
-	if err = ioutil.WriteFile(customPath+fileName, []byte(newFormatYmlString), 0666); err != nil {
+	if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
 		fmt.Println(err)
 	}
 }
 
-func promApplyYamlFileCmd(originPath string, customPath string, fileName string, spec *PrometheusSpec, option string) {
-	WordbyWordScanPrometheus(originPath, customPath, fileName, spec)
-	applyYamlFileCmd(customPath, fileName, option, spec.NamespaceName)
+func promApplyYamlFileCmd(gitPath string, fileName string, spec *PrometheusSpec, option string) {
+	if err := DownloadFile(fileName, gitPath); err != nil {
+			panic(err)
+	}
+	WordbyWordScanPrometheus(fileName, spec)
+	applyYamlFileCmd(fileName, option, spec.NamespaceName)
 }
 
-func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPath string) {
+func CreatePrometheus(prometheusSpec PrometheusSpec, gitPath string) {
 	// /////////test config
 	// var Prometheus_spec = PrometheusSpec{
 	// 	scrapeInterv:  "15s",
@@ -53,11 +56,12 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPa
 	// }
 	// ///////////////////
 
-	connectToClusterCmd()
+	//connectToClusterCmd()
+
 	createNamespaceCmd(prometheusSpec.NamespaceName)
-	promApplyYamlFileCmd(originPath, customPath, "prom_clusterRole.yaml", &prometheusSpec, "")
-	promApplyYamlFileCmd(originPath, customPath, "prom_config_map.yaml", &prometheusSpec, "")
-	promApplyYamlFileCmd(originPath, customPath, "prom_deployment.yaml", &prometheusSpec, "")
+	promApplyYamlFileCmd(gitPath, "prom_clusterRole.yaml", &prometheusSpec, "")
+	promApplyYamlFileCmd(gitPath, "prom_config_map.yaml", &prometheusSpec, "")
+	promApplyYamlFileCmd(gitPath, "prom_deployment.yaml", &prometheusSpec, "")
 
 	//////////////////Check deployment file
 	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+prometheusSpec.NamespaceName)
@@ -66,5 +70,5 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, originPath string, customPa
 	printError(err)
 	printOutput(output)
 	//////////////////////////////////////////
-	promApplyYamlFileCmd(originPath, customPath, "prom_service.yaml", &prometheusSpec, "--namespace=")
+	promApplyYamlFileCmd(gitPath, "prom_service.yaml", &prometheusSpec, "--namespace=")
 }

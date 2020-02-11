@@ -17,8 +17,8 @@ type GrafanaSpec struct {
 	NodePort	string `json:"nodePort"`	//default: 32000
 }
 
-func WordbyWordScanGrafana(originPath string, customPath string, fileName string, spec *GrafanaSpec) {
-	content, err := ioutil.ReadFile(originPath + fileName)
+func WordbyWordScanGrafana(fileName string, spec *GrafanaSpec) {
+	content, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -39,17 +39,20 @@ func WordbyWordScanGrafana(originPath string, customPath string, fileName string
 	newFormatYmlString := replacerArg.Replace(text)
 	//fmt.Println(newFormatYmlString)
 
-	if err = ioutil.WriteFile(customPath+fileName, []byte(newFormatYmlString), 0666); err != nil {
+	if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
 		fmt.Println(err)
 	}
 }
 
-func grafApplyYamlFileCmd(originPath string, customPath string, fileName string, spec *GrafanaSpec, option string) {
-	WordbyWordScanGrafana(originPath, customPath, fileName, spec)
-	applyYamlFileCmd(customPath, fileName, option, spec.NamespaceName)
+func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, option string) {
+	if err := DownloadFile(fileName, gitPath); err != nil {
+			panic(err)
+	}
+	WordbyWordScanGrafana(fileName, spec)
+	applyYamlFileCmd(fileName, option, spec.NamespaceName)
 }
 
-func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string) {
+func CreateGrafana(grafanaSpec GrafanaSpec, gitPath string) {
 	// ////////test config
 	// var grafana_spec = GrafanaSpec{
 	// 	namespaceName:  "monitoring",
@@ -63,13 +66,11 @@ func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string
 	// ///////////
 
 	connectToClusterCmd()
+
 	createNamespaceCmd(grafanaSpec.NamespaceName)
 	///grafana + prometheus 라면
-	grafApplyYamlFileCmd(originPath, customPath, "graf_with_prom_config_map.yaml", &grafanaSpec, "")
-
-	///grafana만이라면 config map 스킵
-	//
-	grafApplyYamlFileCmd(originPath, customPath, "graf_deployment.yaml", &grafanaSpec, "")
+	grafApplyYamlFileCmd(gitPath, "graf_with_prom_config_map.yaml", &grafanaSpec, "")
+	grafApplyYamlFileCmd(gitPath, "graf_deployment.yaml", &grafanaSpec, "")
 
 	//////////////////Check deployment file
 	cmd := exec.Command("kubectl", "get", "deployments", "--namespace="+grafanaSpec.NamespaceName)
@@ -78,5 +79,5 @@ func CreateGrafana(grafanaSpec GrafanaSpec, originPath string, customPath string
 	printError(err)
 	printOutput(output)
 	//////////////////////////////////////////
-	grafApplyYamlFileCmd(originPath, customPath, "graf_service.yaml", &grafanaSpec, "--namespace=")
+	grafApplyYamlFileCmd(gitPath, "graf_service.yaml", &grafanaSpec, "--namespace=")
 }
