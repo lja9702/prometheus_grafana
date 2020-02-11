@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"http"
+	"io"
 )
 
 /////////////////////////////////////////Check cmd output///////////
