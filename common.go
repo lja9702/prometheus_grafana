@@ -71,9 +71,9 @@ func applyYamlFileCmd(fileName string, option string, namespace_name string) {
 ///////////////////////////////////////////////////////////////////////
 
 /////delete yaml file
-func deleteFile() {
+func deleteFile(fileName string) {
 	// delete file
-	var err = os.Remove(path)
+	var err = os.Remove(fileName)
 	if isError(err) { return }
 
 	fmt.Println("==> done deleting file")
