@@ -45,11 +45,13 @@ func WordbyWordScanGrafana(fileName string, spec *GrafanaSpec) {
 }
 
 func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, option string) {
-	if err := DownloadFile(fileName, gitPath); err != nil {
-			panic(err)
+	if non_err := DownloadFile(fileName, gitPath); non_err == nil {
+			WordbyWordScanGrafana(fileName, spec)
+			applyYamlFileCmd(fileName, option, spec.NamespaceName)
+			deleteFile(fileName)
+	} else{
+		panic(err)
 	}
-	WordbyWordScanGrafana(fileName, spec)
-	applyYamlFileCmd(fileName, option, spec.NamespaceName)
 }
 
 func CreateGrafana(grafanaSpec GrafanaSpec, gitPath string) {

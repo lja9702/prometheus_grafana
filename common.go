@@ -92,3 +92,19 @@ func DownloadFile(filepath string, url string) error {
     _, err = io.Copy(out, resp.Body)
     return err
 }
+
+func deleteFile(path string) {
+	// delete file
+	var err = os.Remove(path)
+	if isError(err) { return }
+
+	fmt.Println("==> done deleting file")
+}
+
+func isError(err error) bool {
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return (err != nil)
+}

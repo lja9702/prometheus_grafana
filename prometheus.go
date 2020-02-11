@@ -39,11 +39,13 @@ func WordbyWordScanPrometheus(fileName string, spec *PrometheusSpec) {
 }
 
 func promApplyYamlFileCmd(gitPath string, fileName string, spec *PrometheusSpec, option string) {
-	if err := DownloadFile(fileName, gitPath); err != nil {
-			panic(err)
+	if non_err := DownloadFile(fileName, gitPath); non_err == nil {
+			WordbyWordScanPrometheus(fileName, spec)
+			applyYamlFileCmd(fileName, option, spec.NamespaceName)
+			deleteFile(fileName)
+	} else{
+		panic(err)
 	}
-	WordbyWordScanPrometheus(fileName, spec)
-	applyYamlFileCmd(fileName, option, spec.NamespaceName)
 }
 
 func CreatePrometheus(prometheusSpec PrometheusSpec, gitPath string) {
@@ -71,4 +73,5 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, gitPath string) {
 	printOutput(output)
 	//////////////////////////////////////////
 	promApplyYamlFileCmd(gitPath, "prom_service.yaml", &prometheusSpec, "--namespace=")
+	return true
 }
