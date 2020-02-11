@@ -50,7 +50,7 @@ func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, op
 			applyYamlFileCmd(fileName, option, spec.NamespaceName)
 			deleteFile(fileName)
 	} else{
-		panic(err)
+		panic(non_err)
 	}
 }
 

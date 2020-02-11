@@ -44,7 +44,7 @@ func promApplyYamlFileCmd(gitPath string, fileName string, spec *PrometheusSpec,
 			applyYamlFileCmd(fileName, option, spec.NamespaceName)
 			deleteFile(fileName)
 	} else{
-		panic(err)
+		panic(non_err)
 	}
 }
 
@@ -73,5 +73,4 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, gitPath string) {
 	printOutput(output)
 	//////////////////////////////////////////
 	promApplyYamlFileCmd(gitPath, "prom_service.yaml", &prometheusSpec, "--namespace=")
-	return true
 }
