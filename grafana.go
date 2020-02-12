@@ -38,11 +38,11 @@ func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, op
 		newFormatYmlString := replacerArg.Replace(yamlStr)
 		//fmt.Println(newFormatYmlString)
 
-		if err = ioutil.WriteFile("custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
+		if err = ioutil.WriteFile("/tmp/custom_"+fileName, []byte(newFormatYmlString), 0666); err != nil {
 			fmt.Println(err)
 		} else{
-			applyYamlFileCmd("custom_"+fileName, option, spec.NamespaceName)
-			deleteFile("custom_"+fileName)
+			applyYamlFileCmd("/tmp/custom_"+fileName, option, spec.NamespaceName)
+			deleteFile("/tmp/custom_"+fileName)
 		}
 	}
 }
