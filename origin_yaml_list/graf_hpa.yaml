@@ -2,11 +2,12 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: grafana-hpa
+  namespace: {{namespaceName}}
 spec:
   maxReplicas: 10
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta2
+    apiVersion: apps/v1
     kind: Deployment
     name: grafana
   targetCPUUtilizationPercentage: 50
