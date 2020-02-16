@@ -37,7 +37,7 @@ func promApplyYamlFileCmd(gitPath string, fileName string, spec *PrometheusSpec,
 			fmt.Println(err)
 		} else{
 			applyYamlFileCmd("/tmp/custom_"+fileName, option, spec.NamespaceName)
-			deleteFile("/tmp/custom_"+fileName)
+			//deleteFile("/tmp/custom_"+fileName)
 		}
 	}
 }

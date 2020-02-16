@@ -42,7 +42,7 @@ func grafApplyYamlFileCmd(gitPath string, fileName string, spec *GrafanaSpec, op
 			fmt.Println(err)
 		} else{
 			applyYamlFileCmd("/tmp/custom_"+fileName, option, spec.NamespaceName)
-			deleteFile("/tmp/custom_"+fileName)
+			//deleteFile("/tmp/custom_"+fileName)
 		}
 	}
 }
@@ -75,4 +75,6 @@ func CreateGrafana(grafanaSpec GrafanaSpec, gitPath string) {
 	printOutput(output)
 	//////////////////////////////////////////
 	grafApplyYamlFileCmd(gitPath, "graf_service.yaml", &grafanaSpec, "--namespace=")
+
+	grafApplyYamlFileCmd(gitPath, "graf_hpa.yaml", &grafanaSpec, "")
 }
