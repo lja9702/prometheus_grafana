@@ -9,14 +9,14 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`grafana.aip.kt.geniecube.io`)
+  - match: Host(`prometheus.aip.kt.geniecube.io`)
     kind: Rule
     services:
-    - name: grafana
-      port: 3000
+    - name: prometheus
+      port: 9090
   tls:
     opetions:
       namespace: {{namespaceName}}
     certResolver: le
     domains:
-    - main: grafana.aip.kt.geniecube.io
+    - main: prometheus.aip.kt.geniecube.io

@@ -5,7 +5,7 @@ metadata:
   namespace: {{namespaceName}}
 spec:
   endpoints:
-  - dnsName: grafana.aip.kt.geniecube.io
+  - dnsName: prometheus.aip.kt.geniecube.io
     recordTTL: 180
     recordType: CNAME
     targets:

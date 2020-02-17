@@ -24,7 +24,7 @@ spec:
           limits:
             memory: {{limitsMemory}}
             cpu: {{limitsCpu}}
-          requests: 
+          requests:
             memory: {{requestsMemory}}
             cpu: {{requestsCpu}}
         volumeMounts:
