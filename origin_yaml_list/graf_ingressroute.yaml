@@ -1,0 +1,22 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana
+  namespace: {{namespaceName}}
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`kubedash.kt.grafana.io`)
+    kind: Rule
+    services:
+    - name: grafana
+      port: 3000
+  tls:
+    opetions:
+      namespace: {{namespaceName}}
+    certResolver: le
+    domains:
+    - main: kubedash.kt.grafana.io

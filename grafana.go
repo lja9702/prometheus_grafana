@@ -77,4 +77,8 @@ func CreateGrafana(grafanaSpec GrafanaSpec, gitPath string) {
 	grafApplyYamlFileCmd(gitPath, "graf_service.yaml", &grafanaSpec, "--namespace=")
 
 	grafApplyYamlFileCmd(gitPath, "graf_hpa.yaml", &grafanaSpec, "")
+
+	///////////ingress and dns
+	grafApplyYamlFileCmd(gitPath, "graf_dnsendpoint.yaml", &grafanaSpec, "")
+	grafApplyYamlFileCmd(gitPath, "graf_ingressroute.yaml", &grafanaSpec, "")
 }
