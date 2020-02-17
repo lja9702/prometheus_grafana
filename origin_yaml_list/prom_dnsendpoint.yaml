@@ -1,7 +1,7 @@
 apiVersion: externaldns.k8s.io/v1alpha1
 kind: DNSEndpoint
 metadata:
-  name: grafana
+  name: prometheus-service
   namespace: {{namespaceName}}
 spec:
   endpoints:
