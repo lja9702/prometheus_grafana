@@ -68,6 +68,8 @@ func CreatePrometheus(prometheusSpec PrometheusSpec, gitPath string) {
 	//////////////////////////////////////////
 	promApplyYamlFileCmd(gitPath, "prom_service.yaml", &prometheusSpec, "--namespace=")
 
+	promApplyYamlFileCmd(gitPath, "prom_vpa.yaml", &prometheusSpec, "")
+
 	/////////////////dns and ingress
 	promApplyYamlFileCmd(gitPath, "prom_dnsendpoint.yaml", &prometheusSpec, "")
 	promApplyYamlFileCmd(gitPath, "prom_ingressroute.yaml", &prometheusSpec, "")
