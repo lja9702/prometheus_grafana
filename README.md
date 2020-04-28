@@ -69,3 +69,4 @@ gitPath := "https://raw.githubusercontent.com/lja9702/prometheus_grafana/master/
 pg.CreateGrafana(grafanaSpec, gitPath)
 ```
 
+** 참고: default라고 적힌 값은 진행한 프로젝트 frontend에서 지정한 임의의 값이며, 현 모듈에서는 적용되지 않습니다.
