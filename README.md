@@ -19,8 +19,8 @@ pg "github.com/lja9702/prometheus_grafana"
 * JSON 형식
 ```
 type PrometheusSpec struct {
-	NamespaceName string `json:"namespaceName"` //namespace 명 (defult: monitoring)
-	ImgVersion    string `json:"imgVersion"`    //prometheus image version (defalt: latest)
+	NamespaceName string `json:"namespaceName"` //namespace 명 (default: monitoring)
+	ImgVersion    string `json:"imgVersion"`    //prometheus image version (default: latest)
 	ScrapeInterv  string `json:"scrapeInterv"`  //prometheus가 스크랩을 요청하는 시간 간격(default: 15s)
 	NodePort   string `json:"nodePort"`   //(default: 30000)
 }
@@ -42,9 +42,9 @@ pg.CreatePrometheus(prometheusSpec, gitPath)
 * JSON 형식
 ```
 type GrafanaSpec struct {
-	NamespaceName  string `json:"namespaceName"`  //namespace 명 (defult: monitoring)
-	ImgVersion     string `json:"imgVersion"`     //prometheus image version (defalt: latest)
-	RequestsMemory string `json:"requestsMemory"` //request는 컨테이너가 생성될때 요청하는 리소스 양 (defalt: 1Gi)
+	NamespaceName  string `json:"namespaceName"`  //namespace 명 (default: monitoring)
+	ImgVersion     string `json:"imgVersion"`     //prometheus image version (default: latest)
+	RequestsMemory string `json:"requestsMemory"` //request는 컨테이너가 생성될때 요청하는 리소스 양 (default: 1Gi)
 	RequestsCpu   string `json:"requestsCpu"`    //default: 500m
 	LimitsMemory   string `json:"limitsMemory"`   //리소스가 더 필요한 경우 추가로 더 사용할 수 있는 부분 (default: 2Gi)
 	LimitsCpu      string `json:"limitsCpu"`      //default: 1000m
